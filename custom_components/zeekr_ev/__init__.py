@@ -11,15 +11,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.typing import ConfigType
-
 from zeekr_ev_api.client import ZeekrClient
 
-from .coordinator import ZeekrCoordinator
 from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
 from .const import DOMAIN
 from .const import PLATFORMS
 from .const import STARTUP_MESSAGE
+from .coordinator import ZeekrCoordinator
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

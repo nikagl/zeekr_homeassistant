@@ -1,7 +1,8 @@
 """Device tracker platform for Zeekr EV API Integration."""
 from __future__ import annotations
 
-from homeassistant.components.device_tracker import SourceType, TrackerEntity
+from homeassistant.components.device_tracker import SourceType
+from homeassistant.components.device_tracker import TrackerEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -56,7 +57,9 @@ class ZeekrDeviceTracker(CoordinatorEntity, TrackerEntity):
         """Return longitude value of the device."""
         data = self.coordinator.data.get(self.vin, {})
         try:
-            val = data.get("basicVehicleStatus", {}).get("position", {}).get("longitude")
+            val = (
+                data.get("basicVehicleStatus", {}).get("position", {}).get("longitude")
+            )
             return float(val) if val else None
         except (ValueError, TypeError):
             return None

@@ -1,17 +1,15 @@
 """DataUpdateCoordinator for Zeekr EV API Integration."""
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
+from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
-)
-
-from zeekr_ev_api.client import ZeekrClient, Vehicle
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import UpdateFailed
+from zeekr_ev_api.client import Vehicle
+from zeekr_ev_api.client import ZeekrClient
 
 from .const import DOMAIN
 

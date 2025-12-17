@@ -45,7 +45,9 @@ class ZeekrLock(CoordinatorEntity, LockEntity):
         # Assuming "1" is locked based on common status codes, need to verify
         # The user JSON showed: "doorLockStatusDriver": "1"
         try:
-            status = data.get("additionalVehicleStatus", {}).get("drivingSafetyStatus", {})
+            status = data.get("additionalVehicleStatus", {}).get(
+                "drivingSafetyStatus", {}
+            )
             # Check all doors? Or just driver? Let's assume global lock if driver is locked.
             # Better: if ALL are locked.
             # But usually centralLockingStatus is the key.
@@ -53,7 +55,7 @@ class ZeekrLock(CoordinatorEntity, LockEntity):
             central = status.get("centralLockingStatus")
             if central == "1":
                 return True
-            if central == "0": # Assuming 0 is unlocked
+            if central == "0":  # Assuming 0 is unlocked
                 return False
 
             # Fallback to driver door
