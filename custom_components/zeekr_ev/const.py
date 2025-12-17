@@ -1,11 +1,10 @@
 """Constants for Zeekr EV API Integration."""
 # Base component constants
 NAME = "Zeekr EV API Integration"
-DOMAIN = "zeekr_ev_api"
+DOMAIN = "zeekr_ev"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "1.0.0"
 
-ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
 ISSUE_URL = "https://github.com/Fryyyyy/zeekr_homeassistant/issues"
 
 # Icons

@@ -2,8 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Zeekr EV API Integration",
-        "description": "If you need help with the configuration have a look here: https://github.com/Fryyyyy/zeekr_homeassistant",
+        "title": "Connect to Zeekr Account",
+        "description": "Please enter your Zeekr credentials.",
         "data": {
           "username": "Username",
           "password": "Password"
