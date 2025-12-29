@@ -17,14 +17,21 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 # Platforms
 BINARY_SENSOR = "binary_sensor"
 SENSOR = "sensor"
-SWITCH = "switch"
-PLATFORMS = [BINARY_SENSOR, SENSOR, SWITCH]
+DEVICE_TRACKER = "device_tracker"
+LOCK = "lock"
+PLATFORMS = [BINARY_SENSOR, SENSOR, DEVICE_TRACKER, LOCK]
 
 
 # Configuration and options
 CONF_ENABLED = "enabled"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
+CONF_HMAC_ACCESS_KEY = "hmac_access_key"
+CONF_HMAC_SECRET_KEY = "hmac_secret_key"
+CONF_PASSWORD_PUBLIC_KEY = "password_public_key"
+CONF_PROD_SECRET = "prod_secret"
+CONF_VIN_KEY = "vin_key"
+CONF_VIN_IV = "vin_iv"
 
 # Defaults
 DEFAULT_NAME = DOMAIN

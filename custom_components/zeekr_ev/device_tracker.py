@@ -22,7 +22,7 @@ async def async_setup_entry(
     coordinator: ZeekrCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities = []
-    for vin in coordinator.data.keys():
+    for vin in coordinator.data:
         entities.append(ZeekrDeviceTracker(coordinator, vin))
 
     async_add_entities(entities)

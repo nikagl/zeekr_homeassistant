@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import timedelta
+import logging
+
+from zeekr_ev_api.client import Vehicle, ZeekrClient
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from homeassistant.helpers.update_coordinator import UpdateFailed
-from zeekr_ev_api.client import Vehicle
-from zeekr_ev_api.client import ZeekrClient
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import DOMAIN
 
@@ -37,6 +36,13 @@ class ZeekrCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(minutes=5),
         )
 
+    def get_vehicle_by_vin(self, vin: str) -> Vehicle | None:
+        """Get a vehicle by VIN."""
+        for vehicle in self.vehicles:
+            if vehicle.vin == vin:
+                return vehicle
+        return None
+
     async def _async_update_data(self) -> dict[str, dict]:
         """Fetch data from API endpoint."""
         try:
@@ -53,8 +59,7 @@ class ZeekrCoordinator(DataUpdateCoordinator):
                     vehicle.get_status
                 )
                 data[vehicle.vin] = vehicle_data
-
-            return data
-
         except Exception as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
+        else:
+            return data
