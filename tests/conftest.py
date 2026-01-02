@@ -1,0 +1,33 @@
+import asyncio
+import pytest
+
+
+class DummyConfigEntries:
+    async def async_forward_entry_setups(self, entry, platforms):
+        return None
+
+    async def async_unload_platforms(self, entry, platforms):
+        return True
+
+
+class DummyHass:
+    def __init__(self):
+        self.data = {}
+        self.config_entries = DummyConfigEntries()
+
+    async def async_add_executor_job(self, func, *args, **kwargs):
+        # Run synchronous callable in test loop
+        return func(*args, **kwargs)
+
+
+@pytest.fixture
+def hass():
+    """Return a minimal Home Assistant-like object for unit tests."""
+    return DummyHass()
+
+
+@pytest.fixture
+def event_loop():
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()

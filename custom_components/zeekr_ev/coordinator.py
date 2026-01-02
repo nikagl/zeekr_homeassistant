@@ -59,6 +59,17 @@ class ZeekrCoordinator(DataUpdateCoordinator):
                     vehicle.get_status
                 )
                 data[vehicle.vin] = vehicle_data
+
+                # Fetch charging status if vehicle is currently charging
+                if vehicle_data.get("additionalVehicleStatus", {}).get("electricVehicleStatus", {}).get("chargerState"):
+                    try:
+                        charging_status = await self.hass.async_add_executor_job(
+                            vehicle.get_charging_status
+                        )
+                        if charging_status:
+                            vehicle_data.setdefault("chargingStatus", {}).update(charging_status)
+                    except Exception as charge_err:
+                        _LOGGER.debug("Error fetching charging status for %s: %s", vehicle.vin, charge_err)
         except Exception as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
         else:

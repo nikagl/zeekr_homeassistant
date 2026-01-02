@@ -1,6 +1,7 @@
 """Adds config flow for Zeekr EV API Integration."""
 
 import logging
+from typing import Dict
 import voluptuous as vol
 from zeekr_ev_api.client import ZeekrClient
 
@@ -23,15 +24,16 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
-class ZeekrEVAPIFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class ZeekrEVAPIFlowHandler(config_entries.ConfigFlow):
     """Config flow for zeekr_ev_api_integration."""
 
+    DOMAIN = DOMAIN
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     def __init__(self) -> None:
         """Initialize."""
-        self._errors = {}
+        self._errors: Dict[str, str] = {}
         self._temp_client = None
 
     async def async_step_user(self, user_input=None):

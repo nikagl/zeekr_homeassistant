@@ -73,7 +73,7 @@ async def async_setup_entry(
                 "Charging Status",
                 lambda d: d.get("additionalVehicleStatus", {})
                 .get("electricVehicleStatus", {})
-                .get("isCharging"),
+                .get("chargerState"),
                 BinarySensorDeviceClass.BATTERY_CHARGING,
             )
         )
@@ -86,7 +86,7 @@ async def async_setup_entry(
                 "Plugged In",
                 lambda d: d.get("additionalVehicleStatus", {})
                 .get("electricVehicleStatus", {})
-                .get("isPluggedIn"),
+                .get("statusOfChargerConnection"),
                 BinarySensorDeviceClass.PLUG,
             )
         )

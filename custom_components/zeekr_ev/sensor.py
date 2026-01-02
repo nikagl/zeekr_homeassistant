@@ -10,7 +10,10 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
+    UnitOfElectricCurrent,
+    UnitOfElectricPotential,
     UnitOfLength,
+    UnitOfPower,
     UnitOfPressure,
     UnitOfTemperature,
 )
@@ -103,6 +106,57 @@ async def async_setup_entry(
                     .get(f"tyreStatus{t}"),
                     UnitOfPressure.KPA,
                     SensorDeviceClass.PRESSURE,
+                )
+            )
+
+        # Charging Status Sensors (only when charging)
+        if data.get("chargingStatus"):
+            # Charge Voltage
+            entities.append(
+                ZeekrSensor(
+                    coordinator,
+                    vin,
+                    "charge_voltage",
+                    "Charge Voltage",
+                    lambda d: d.get("chargingStatus", {}).get("chargeVoltage"),
+                    UnitOfElectricPotential.VOLT,
+                    SensorDeviceClass.VOLTAGE,
+                )
+            )
+            # Charge Current
+            entities.append(
+                ZeekrSensor(
+                    coordinator,
+                    vin,
+                    "charge_current",
+                    "Charge Current",
+                    lambda d: d.get("chargingStatus", {}).get("chargeCurrent"),
+                    UnitOfElectricCurrent.AMPERE,
+                    SensorDeviceClass.CURRENT,
+                )
+            )
+            # Charge Power
+            entities.append(
+                ZeekrSensor(
+                    coordinator,
+                    vin,
+                    "charge_power",
+                    "Charge Power",
+                    lambda d: d.get("chargingStatus", {}).get("chargePower"),
+                    UnitOfPower.KILO_WATT,
+                    SensorDeviceClass.POWER,
+                )
+            )
+            # Charge Speed
+            entities.append(
+                ZeekrSensor(
+                    coordinator,
+                    vin,
+                    "charge_speed",
+                    "Charge Speed",
+                    lambda d: d.get("chargingStatus", {}).get("chargeSpeed"),
+                    None,
+                    None,
                 )
             )
 
