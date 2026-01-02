@@ -1,4 +1,4 @@
-from zeekr_ev.sensor import ZeekrSensor
+from custom_components.zeekr_ev.sensor import ZeekrSensor
 
 
 class DummyCoordinator:

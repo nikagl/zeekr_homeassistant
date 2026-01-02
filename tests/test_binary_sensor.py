@@ -1,4 +1,4 @@
-from zeekr_ev.binary_sensor import ZeekrBinarySensor
+from custom_components.zeekr_ev.binary_sensor import ZeekrBinarySensor
 
 
 class DummyCoordinator:

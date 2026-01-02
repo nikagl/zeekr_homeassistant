@@ -1,4 +1,4 @@
-import zeekr_ev.config_flow as config_flow
+import custom_components.zeekr_ev.config_flow as config_flow
 
 
 class FakeClient:

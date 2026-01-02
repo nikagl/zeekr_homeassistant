@@ -1,4 +1,4 @@
-from zeekr_ev import __init__ as comp_init
+from custom_components.zeekr_ev import async_setup_entry
 
 
 class DummyEntry:
@@ -12,5 +12,5 @@ class DummyEntry:
 
 async def test_async_setup_entry_missing_credentials(hass):
     entry = DummyEntry(data={})
-    res = await comp_init.async_setup_entry(hass, entry)
+    res = await async_setup_entry(hass, entry)
     assert res is False

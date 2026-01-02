@@ -1,4 +1,4 @@
-from zeekr_ev.device_tracker import ZeekrDeviceTracker
+from custom_components.zeekr_ev.device_tracker import ZeekrDeviceTracker
 
 
 class DummyCoordinator:

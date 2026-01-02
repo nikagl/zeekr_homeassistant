@@ -1,4 +1,4 @@
-from zeekr_ev.lock import ZeekrLock
+from custom_components.zeekr_ev.lock import ZeekrLock
 
 
 class DummyCoordinator:

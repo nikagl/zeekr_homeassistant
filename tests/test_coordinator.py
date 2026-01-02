@@ -1,4 +1,4 @@
-from zeekr_ev.coordinator import ZeekrCoordinator
+from custom_components.zeekr_ev.coordinator import ZeekrCoordinator
 
 
 class FakeVehicle:
