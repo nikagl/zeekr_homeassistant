@@ -19,7 +19,7 @@ BINARY_SENSOR = "binary_sensor"
 SENSOR = "sensor"
 DEVICE_TRACKER = "device_tracker"
 LOCK = "lock"
-PLATFORMS = [BINARY_SENSOR, SENSOR, DEVICE_TRACKER, LOCK]
+PLATFORMS = [BINARY_SENSOR, DEVICE_TRACKER, LOCK, SENSOR]
 
 
 # Configuration and options
@@ -32,9 +32,11 @@ CONF_PASSWORD_PUBLIC_KEY = "password_public_key"
 CONF_PROD_SECRET = "prod_secret"
 CONF_VIN_KEY = "vin_key"
 CONF_VIN_IV = "vin_iv"
+CONF_POLLING_INTERVAL = "polling_interval"
 
 # Defaults
 DEFAULT_NAME = DOMAIN
+DEFAULT_POLLING_INTERVAL = 5  # minutes
 
 
 STARTUP_MESSAGE = f"""

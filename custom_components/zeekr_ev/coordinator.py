@@ -11,7 +11,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN
+from .const import CONF_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,11 +29,12 @@ class ZeekrCoordinator(DataUpdateCoordinator):
         self.client = client
         self.entry = entry
         self.vehicles: list[Vehicle] = []
+        polling_interval = entry.data.get(CONF_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL)
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=5),
+            update_interval=timedelta(minutes=polling_interval),
         )
 
     def get_vehicle_by_vin(self, vin: str) -> Vehicle | None:

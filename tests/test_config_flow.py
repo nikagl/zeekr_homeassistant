@@ -1,4 +1,5 @@
 import custom_components.zeekr_ev.config_flow as config_flow
+from custom_components.zeekr_ev.const import CONF_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL
 
 
 class FakeClient:
@@ -45,3 +46,13 @@ async def test_test_credentials_failure(hass, monkeypatch):
         "vin_iv",
     )
     assert ok is False
+
+
+def test_polling_interval_default():
+    """Test that polling interval has a default value."""
+    assert DEFAULT_POLLING_INTERVAL == 5
+
+
+def test_polling_interval_config_key():
+    """Test that polling interval config key is defined."""
+    assert CONF_POLLING_INTERVAL == "polling_interval"
