@@ -41,6 +41,7 @@ class ZeekrCoordinator(DataUpdateCoordinator):
         self.seat_duration = 15
         self.ac_duration = 15
         self.request_stats = ZeekrRequestStats(hass)
+        self.latest_poll_time = None  # Track latest poll time
         polling_interval = entry.data.get(CONF_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL)
         super().__init__(
             hass,
@@ -77,6 +78,7 @@ class ZeekrCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict[str, dict]:
         """Fetch data from API endpoint."""
+        from datetime import datetime
         try:
             # Refresh vehicle list if empty (first run)
             if not self.vehicles:
@@ -116,6 +118,9 @@ class ZeekrCoordinator(DataUpdateCoordinator):
                         vehicle_data["chargingLimit"] = charging_limit
                 except Exception as limit_err:
                     _LOGGER.debug("Error fetching charging limit for %s: %s", vehicle.vin, limit_err)
+
+            # Update latest poll time on every automatic poll
+            self.latest_poll_time = datetime.now().isoformat()
 
         except Exception as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err

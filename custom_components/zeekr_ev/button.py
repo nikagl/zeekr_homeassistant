@@ -78,7 +78,14 @@ class ZeekrForceUpdateButton(ZeekrEntity, ButtonEntity):
         self._attr_name = "Poll Vehicle Data"
         self._attr_unique_id = f"{vin}_poll_vehicle_data"
 
+    @property
+    def state(self):
+        """Return the latest poll time/date as the button state."""
+        return self.coordinator.latest_poll_time
+
     async def async_press(self) -> None:
         """Handle the button press."""
+        from datetime import datetime
         _LOGGER.info("Poll vehicle data requested for vehicle %s", self.vin)
+        self.coordinator.latest_poll_time = datetime.now().isoformat()
         await self.coordinator.async_request_refresh()
