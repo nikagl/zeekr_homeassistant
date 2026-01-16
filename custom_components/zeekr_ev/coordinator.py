@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 import logging
 from typing import TYPE_CHECKING, Optional
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+import homeassistant.helpers.event as event
 
 
 from .const import CONF_POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL, DOMAIN
@@ -55,7 +57,6 @@ class ZeekrCoordinator(DataUpdateCoordinator):
         self._setup_daily_reset()
 
     def _setup_daily_reset(self):
-        import homeassistant.helpers.event as event
         if self._unsub_reset:
             self._unsub_reset()
         self._unsub_reset = event.async_track_time_change(
@@ -78,7 +79,6 @@ class ZeekrCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict[str, dict]:
         """Fetch data from API endpoint."""
-        from datetime import datetime
         try:
             # Refresh vehicle list if empty (first run)
             if not self.vehicles:

@@ -22,7 +22,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
+
 from .coordinator import ZeekrCoordinator
+import importlib
 
 
 async def async_setup_entry(
@@ -317,7 +319,6 @@ class ZeekrAPIStatusSensor(CoordinatorEntity, SensorEntity):
             if self.coordinator.vehicles:
                 try:
                     # Import the encryption function dynamically (try pip first, then local)
-                    import importlib
                     try:
                         zeekr_app_sig = importlib.import_module("zeekr_ev_api.zeekr_app_sig")
                     except ImportError:
