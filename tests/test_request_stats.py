@@ -1,7 +1,7 @@
-
 import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
 from datetime import datetime, timedelta
+
 from custom_components.zeekr_ev.request_stats import ZeekrRequestStats
 
 
@@ -65,27 +65,41 @@ async def test_request_stats_load_reset_needed(hass, mock_store):
 
 @pytest.mark.asyncio
 async def test_inc_request(hass, mock_store):
+    """Test that incrementing a request marks data as dirty and is saved on shutdown."""
     # Setup default return value for load to avoid MagicMock pollution
     mock_store.async_load.return_value = {}
 
     stats = ZeekrRequestStats(hass)
     await stats.async_load()
 
+    # Increment and check state
     await stats.async_inc_request()
     assert stats.api_requests_today == 1
     assert stats.api_requests_total == 1
-    assert mock_store.async_save.called
+    assert stats._dirty is True
+    mock_store.async_save.assert_not_called()
+
+    # Now, trigger shutdown and verify save
+    await stats.async_shutdown()
+    mock_store.async_save.assert_called_once()
 
 
 @pytest.mark.asyncio
 async def test_inc_invoke(hass, mock_store):
+    """Test that incrementing an invoke marks data as dirty and is saved on shutdown."""
     # Setup default return value for load
     mock_store.async_load.return_value = {}
 
     stats = ZeekrRequestStats(hass)
     await stats.async_load()
 
+    # Increment and check state
     await stats.async_inc_invoke()
     assert stats.api_invokes_today == 1
     assert stats.api_invokes_total == 1
-    assert mock_store.async_save.called
+    assert stats._dirty is True
+    mock_store.async_save.assert_not_called()
+
+    # Now, trigger shutdown and verify save
+    await stats.async_shutdown()
+    mock_store.async_save.assert_called_once()
