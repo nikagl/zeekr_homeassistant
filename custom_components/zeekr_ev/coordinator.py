@@ -90,24 +90,22 @@ class ZeekrCoordinator(DataUpdateCoordinator):
 
             data = {}
             for vehicle in self.vehicles:
-                # get_status returns a dict, no need to wrap if it was a property, but it's a method calling network
                 await self.request_stats.async_inc_request()
                 vehicle_data = await self.hass.async_add_executor_job(
                     vehicle.get_status
                 )
                 data[vehicle.vin] = vehicle_data
 
-                # Fetch charging status if vehicle is currently charging
-                if vehicle_data.get("additionalVehicleStatus", {}).get("electricVehicleStatus", {}).get("chargerState"):
-                    try:
-                        await self.request_stats.async_inc_request()
-                        charging_status = await self.hass.async_add_executor_job(
-                            vehicle.get_charging_status
-                        )
-                        if charging_status:
-                            vehicle_data.setdefault("chargingStatus", {}).update(charging_status)
-                    except Exception as charge_err:
-                        _LOGGER.debug("Error fetching charging status for %s: %s", vehicle.vin, charge_err)
+                # Always fetch charging status for every vehicle
+                try:
+                    await self.request_stats.async_inc_request()
+                    charging_status = await self.hass.async_add_executor_job(
+                        vehicle.get_charging_status
+                    )
+                    if charging_status:
+                        vehicle_data.setdefault("chargingStatus", {}).update(charging_status)
+                except Exception as charge_err:
+                    _LOGGER.debug("Error fetching charging status for %s: %s", vehicle.vin, charge_err)
 
                 # Fetch charging limit
                 try:

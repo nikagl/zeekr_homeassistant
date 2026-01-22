@@ -1,6 +1,6 @@
-"""Switch platform for Zeekr EV API Integration."""
-
 from __future__ import annotations
+
+from homeassistant.components.sensor import SensorEntity
 
 from typing import Any
 
@@ -36,8 +36,43 @@ async def async_setup_entry(
                 status_key="steerWhlHeatingSts"
             )
         )
+        # Add chargerState diagnostic sensor
+        entities.append(ZeekrChargerStateSensor(coordinator, vin))
 
     async_add_entities(entities)
+
+
+class ZeekrChargerStateSensor(CoordinatorEntity[ZeekrCoordinator], SensorEntity):
+    """Sensor to expose raw chargerState value for diagnostics."""
+    def __init__(self, coordinator: ZeekrCoordinator, vin: str):
+        super().__init__(coordinator)
+        self.vin = vin
+        self._attr_name = f"Zeekr {vin[-4:] if vin else ''} Charger State"
+        self._attr_unique_id = f"{vin}_charger_state"
+
+    @property
+    def state(self):
+        return (
+            self.coordinator.data.get(self.vin, {})
+            .get("additionalVehicleStatus", {})
+            .get("electricVehicleStatus", {})
+            .get("chargerState")
+        )
+
+    @property
+    def extra_state_attributes(self):
+        return {
+            "raw_charger_state": self.state
+        }
+
+    @property
+    def device_info(self):
+        """Return device info to attach sensor to car device."""
+        return {
+            "identifiers": {(DOMAIN, self.vin)},
+            "name": f"Zeekr {self.vin}",
+            "manufacturer": "Zeekr",
+        }
 
 
 class ZeekrSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
@@ -79,8 +114,9 @@ class ZeekrSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
                 )
                 if val is None:
                     return None
-                # "2" is charging, "25" is stopped (iOS logic)
-                return str(val) == "2"
+                # "2" (AC charging?), "1" (DC charging?), "25" (stopped AC?), "26" (stopped DC?)
+                # Treat 1 or 2 as charging, 25 or 26 as stopped
+                return str(val) in ("2", "1")
             else:
                 val = (
                     self.coordinator.data.get(self.vin, {})
@@ -162,7 +198,7 @@ class ZeekrSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
                 self.async_write_ha_state()
             # Wait for backend confirmation for charging
             if self.field == "charging":
-                timeout = 15  # seconds
+                timeout = 30  # seconds
                 poll_interval = 2
                 waited = 0
                 charging_confirmed = False
@@ -251,12 +287,13 @@ class ZeekrSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
                 data.setdefault("additionalVehicleStatus", {})
                 .setdefault("electricVehicleStatus", {})
             )
-            # If turning off, set to "25" (stopped, per iOS logic)
-            # If turning on, set to "2" (charging)
+            # If turning off, set to "25" (stopped?)
+            # If turning on, set to "2" (charging?)
             if is_on:
                 ev_status["chargerState"] = "2"
             else:
                 ev_status["chargerState"] = "25"
+            return
         else:
             climate_status = (
                 data.setdefault("additionalVehicleStatus", {})
