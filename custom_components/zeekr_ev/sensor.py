@@ -172,8 +172,8 @@ async def async_setup_entry(
                 "Trip 2 Distance",
                 lambda d: (
                     float(d.get("additionalVehicleStatus", {})
-                    .get("runningStatus", {})
-                    .get("tripMeter2")) / 10
+                          .get("runningStatus", {})
+                          .get("tripMeter2")) / 10
                     if d.get("additionalVehicleStatus", {})
                     .get("runningStatus", {})
                     .get("tripMeter2") is not None
@@ -443,6 +443,7 @@ class ZeekrAPIStatSensor(CoordinatorEntity, SensorEntity):
             "manufacturer": "Zeekr",
             "model": "API Integration",
         }
+
 
 class ZeekrChargerStateSensor(CoordinatorEntity, SensorEntity):
     """Sensor to expose raw chargerState value for diagnostics."""
