@@ -62,18 +62,18 @@ async def async_setup_entry(
         day_switches = []
         for i, dagnaam in enumerate(dagnamen, 1):
             day_switches.append(ZeekrTravelDaySwitch(coordinator, vin, i, dagnaam))
-        
+
         entities.extend(day_switches)
-        
+
         ac_opt = ZeekrTravelOptionSwitch(coordinator, vin, "Travel Plan Comfort", "ac", icon="mdi:air-conditioner")
         bw_opt = ZeekrTravelOptionSwitch(coordinator, vin, "Travel Plan Battery Saver", "bw", icon="mdi:battery-heart")
         cycle_opt = ZeekrTravelOptionSwitch(coordinator, vin, "Travel Plan Repeat", "cycle", icon="mdi:calendar-refresh")
-        
+
         entities.extend([ac_opt, bw_opt, cycle_opt])
-        
+
         travel_switch = ZeekrTravelPlanSwitch(coordinator, vin, day_switches, ac_opt, bw_opt, cycle_opt)
         entities.append(travel_switch)
-        
+
         # Charge Plan Switch
         entities.append(ZeekrChargePlanSwitch(coordinator, vin))
 
@@ -251,7 +251,7 @@ class ZeekrSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
             elif self.field == "sentry_mode":
                 self._update_local_state_optimistically(is_on=True)
                 self.async_write_ha_state()
-                
+
                 async def delayed_refresh():
                     await asyncio.sleep(10)
                     await self.coordinator.async_request_refresh()
@@ -446,13 +446,13 @@ class ZeekrTravelPlanSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
                 target_dt = now.replace(hour=h, minute=m, second=0, microsecond=0)
                 if target_dt <= now:
                     target_dt += timedelta(days=1)
-                
+
                 timestamp_ms = str(int(time_module.mktime(target_dt.timetuple()) * 1000))
                 payload = {
                     "command": "start", "timerId": "", "bwl": "1",
                     "ac": "true" if self._ac_opt.is_on else "false",
                     "bw": "1" if self._bw_opt.is_on else "0",
-                    "scheduleList": [], "scheduledTime": timestamp_ms 
+                    "scheduleList": [], "scheduledTime": timestamp_ms
                 }
 
         await self.coordinator.async_inc_invoke()
@@ -498,9 +498,9 @@ class ZeekrTravelDaySwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
 
     @property
     def is_on(self):
-        if self._is_locally_on is not None: 
+        if self._is_locally_on is not None:
             return self._is_locally_on
-            
+
         travel_plan = self.coordinator.data.get(self.vin, {}).get("travelPlan", {})
         schedules = travel_plan.get("scheduleList") or []
         return any(str(p.get("day")) == str(self.day_index) for p in schedules if isinstance(p, dict))
@@ -534,9 +534,9 @@ class ZeekrTravelOptionSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity)
 
     @property
     def is_on(self):
-        if self._is_locally_on is not None: 
+        if self._is_locally_on is not None:
             return self._is_locally_on
-            
+
         travel_plan = self.coordinator.data.get(self.vin, {}).get("travelPlan", {})
         if not isinstance(travel_plan, dict):
             return False
@@ -544,7 +544,7 @@ class ZeekrTravelOptionSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity)
         if self.key == "cycle":
             schedules = travel_plan.get("scheduleList") or []
             return any(str(p.get("timerActivation")) == "1" for p in schedules if isinstance(p, dict))
-            
+
         return str(travel_plan.get(self.key)).lower() in ["true", "1"]
 
     async def async_turn_on(self, **kwargs):
@@ -586,7 +586,7 @@ class ZeekrChargePlanSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
         start = plan.get("startTime") or "01:15"
         end = plan.get("endTime") or "06:45"
         p = {"target": 2, "endTime": end, "timerId": "2", "startTime": start, "command": "start"}
-        
+
         await self.coordinator.async_inc_invoke()
         await self.hass.async_add_executor_job(vehicle.set_charging_plan, p)
         await asyncio.sleep(2)
@@ -597,7 +597,7 @@ class ZeekrChargePlanSwitch(CoordinatorEntity[ZeekrCoordinator], SwitchEntity):
         if not vehicle:
             return
         p = {"target": 2, "timerId": "2", "startTime": "01:15", "command": "stop"}
-        
+
         await self.coordinator.async_inc_invoke()
         await self.hass.async_add_executor_job(vehicle.set_charging_plan, p)
         await asyncio.sleep(2)
