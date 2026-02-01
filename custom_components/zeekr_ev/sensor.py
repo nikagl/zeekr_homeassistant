@@ -495,6 +495,7 @@ class ZeekrChargerStateSensor(CoordinatorEntity, SensorEntity):
             "manufacturer": "Zeekr",
         }
 
+
 class ZeekrChargingTimeFormattedSensor(CoordinatorEntity, SensorEntity):
     """Sensor for formatted charging time."""
 
