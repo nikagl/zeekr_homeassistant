@@ -8,6 +8,8 @@ on:
       - dev
   pull_request:
 
+# Removed nightly schedule
+
 env:
   DEFAULT_PYTHON: "3.13"
 
@@ -81,3 +83,4 @@ jobs:
             -n auto \
             -p no:sugar \
             tests
+
